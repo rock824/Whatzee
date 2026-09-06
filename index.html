@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#111827" />
+  <title>Whatzee</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#131a2c;
+      --panel2:#182237;
+      --text:#f8fafc;
+      --muted:#94a3b8;
+      --accent:#8b5cf6;
+      --accent2:#38bdf8;
+      --good:#22c55e;
+      --warn:#f59e0b;
+      --danger:#ef4444;
+      --border:rgba(255,255,255,.10);
+      --shadow:0 18px 50px rgba(0,0,0,.35);
+    }
+
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:linear-gradient(180deg,#08101f,#0b1020 35%,#0b1020);color:var(--text);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    body{min-height:100vh}
+
+    button,input,select{font:inherit}
+    button{cursor:pointer}
+    button:disabled{cursor:not-allowed;opacity:.45}
+
+    .app{
+      width:min(1180px,100%);
+      margin:0 auto;
+      padding:18px;
+    }
+
+    .hero{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      flex-wrap:wrap;
+      margin-bottom:16px;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:14px;
+    }
+
+    .logo{
+      width:58px;
+      height:58px;
+      border-radius:18px;
+      display:grid;
+      place-items:center;
+      font-size:32px;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      box-shadow:var(--shadow);
+    }
+
+    h1{margin:0;font-size:clamp(28px,5vw,44px);letter-spacing:-.03em}
+    .tagline{margin:4px 0 0;color:var(--muted);font-size:14px}
+
+    .top-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .btn{
+      border:1px solid var(--border);
+      color:var(--text);
+      background:#1c263b;
+      padding:11px 16px;
+      border-radius:12px;
+      font-weight:800;
+      min-height:44px;
+      transition:.15s ease;
+    }
+    .btn:hover{transform:translateY(-1px);border-color:rgba(255,255,255,.22)}
+    .btn.primary{
+      background:linear-gradient(135deg,var(--accent),#6d5dfc);
+      border-color:transparent;
+    }
+    .btn.good{
+      background:linear-gradient(135deg,#16a34a,#22c55e);
+      border-color:transparent;
+    }
+    .btn.ghost{background:transparent}
+    .btn.danger{background:#391b24;border-color:#7f1d1d}
+
+    .panel{
+      background:rgba(19,26,44,.96);
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:18px;
+      box-shadow:var(--shadow);
+    }
+
+    .setup{
+      display:grid;
+      grid-template-columns:1.1fr .9fr;
+      gap:16px;
+    }
+
+    .setup h2,.game h2{margin:0 0 10px}
+    .setup-copy{color:var(--muted);margin:0 0 16px;line-height:1.5}
+
+    .player-row{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) 120px 130px 44px;
+      gap:10px;
+      margin-bottom:10px;
+      align-items:center;
+    }
+
+    input,select{
+      width:100%;
+      border:1px solid var(--border);
+      background:#0f172a;
+      color:var(--text);
+      border-radius:10px;
+      padding:11px 12px;
+      min-height:44px;
+      outline:none;
+    }
+    input:focus,select:focus{border-color:var(--accent2);box-shadow:0 0 0 3px rgba(56,189,248,.12)}
+
+    .remove{
+      width:44px;
+      height:44px;
+      border-radius:10px;
+      border:1px solid var(--border);
+      background:#25151c;
+      color:#fecaca;
+      font-size:20px;
+    }
+
+    .rules{
+      margin:0;
+      padding-left:20px;
+      color:#cbd5e1;
+      line-height:1.6;
+    }
+
+    .hidden{display:none!important}
+
+    .game-grid{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) minmax(340px,.85fr);
+      gap:16px;
+      align-items:start;
+    }
+
+    .turn-card{
+      display:flex;
+      justify-content:space-between;
+      gap:14px;
+      align-items:flex-start;
+      flex-wrap:wrap;
+      margin-bottom:14px;
+    }
+
+    .eyebrow{
+      color:var(--accent2);
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.1em;
+      font-size:11px;
+      margin-bottom:3px;
+    }
+
+    .turn-title{
+      font-size:26px;
+      font-weight:900;
+      margin:0;
+    }
+
+    .turn-meta{
+      color:var(--muted);
+      font-size:14px;
+      margin-top:4px;
+    }
+
+    .dice-wrap{
+      padding:18px 0 8px;
+    }
+
+    .dice{
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+      min-height:116px;
+    }
+
+    .die{
+      width:88px;
+      height:88px;
+      position:relative;
+      border-radius:18px;
+      background:#f8fafc;
+      border:4px solid #e2e8f0;
+      box-shadow:0 10px 18px rgba(0,0,0,.28);
+      transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease;
+      color:#0f172a;
+      padding:0;
+    }
+
+    .die:hover{transform:translateY(-2px)}
+    .die.held{
+      border-color:var(--accent2);
+      box-shadow:0 0 0 4px rgba(56,189,248,.18),0 12px 20px rgba(0,0,0,.3);
+      transform:translateY(-4px);
+    }
+
+    .die.held::after{
+      content:"HELD";
+      position:absolute;
+      left:50%;
+      bottom:-25px;
+      transform:translateX(-50%);
+      font-size:10px;
+      font-weight:900;
+      letter-spacing:.12em;
+      color:var(--accent2);
+    }
+
+    .pip{
+      position:absolute;
+      width:14px;
+      height:14px;
+      border-radius:50%;
+      background:#111827;
+      transform:translate(-50%,-50%);
+    }
+    .p1{left:25%;top:25%}
+    .p2{left:50%;top:25%}
+    .p3{left:75%;top:25%}
+    .p4{left:25%;top:50%}
+    .p5{left:50%;top:50%}
+    .p6{left:75%;top:50%}
+    .p7{left:25%;top:75%}
+    .p8{left:50%;top:75%}
+    .p9{left:75%;top:75%}
+
+    .roll-area{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top:26px;
+    }
+
+    .status{
+      margin-top:14px;
+      min-height:48px;
+      border:1px solid var(--border);
+      background:#0f172a;
+      border-radius:12px;
+      padding:12px 14px;
+      color:#dbeafe;
+      line-height:1.45;
+    }
+
+    .bot-thinking{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      color:#c4b5fd;
+      font-weight:800;
+    }
+
+    .score-panel{
+      overflow:hidden;
+    }
+
+    .score-header{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:center;
+      margin-bottom:12px;
+    }
+
+    .player-tabs{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-bottom:12px;
+    }
+
+    .tab{
+      border:1px solid var(--border);
+      background:#0f172a;
+      color:#cbd5e1;
+      padding:8px 11px;
+      border-radius:999px;
+      font-weight:800;
+    }
+    .tab.active{background:rgba(139,92,246,.22);border-color:#8b5cf6;color:white}
+
+    .score-table{
+      width:100%;
+      border-collapse:collapse;
+      font-size:14px;
+    }
+
+    .score-table th,.score-table td{
+      border-bottom:1px solid var(--border);
+      padding:9px 8px;
+      text-align:left;
+      vertical-align:middle;
+    }
+    .score-table th{
+      color:var(--muted);
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+    }
+
+    .score-table tr:last-child td{border-bottom:0}
+    .category-name{font-weight:800}
+    .category-desc{display:block;color:var(--muted);font-size:11px;font-weight:500;margin-top:2px}
+
+    .score-btn{
+      min-width:62px;
+      border:1px solid var(--border);
+      background:#19243b;
+      color:white;
+      padding:7px 10px;
+      border-radius:9px;
+      font-weight:900;
+    }
+
+    .score-btn.available{
+      border-color:rgba(34,197,94,.5);
+      background:rgba(34,197,94,.12);
+    }
+
+    .score-value{
+      text-align:right;
+      font-weight:900;
+      font-variant-numeric:tabular-nums;
+    }
+
+    .section-row td{
+      background:rgba(255,255,255,.025);
+      color:#c4b5fd;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      font-size:11px;
+    }
+
+    .totals{
+      margin-top:12px;
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:8px;
+    }
+    .total-box{
+      background:#0f172a;
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:10px;
+      text-align:center;
+    }
+    .total-label{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:800}
+    .total-number{font-size:22px;font-weight:950;margin-top:2px}
+
+    .results{
+      text-align:center;
+      padding:28px;
+    }
+    .winner{
+      font-size:clamp(34px,8vw,68px);
+      margin:6px 0;
+    }
+
+    .standings{
+      width:min(620px,100%);
+      margin:18px auto;
+      text-align:left;
+    }
+    .standing{
+      display:grid;
+      grid-template-columns:44px 1fr auto;
+      gap:12px;
+      align-items:center;
+      padding:12px;
+      border-bottom:1px solid var(--border);
+    }
+
+    .place{
+      width:34px;
+      height:34px;
+      border-radius:50%;
+      display:grid;
+      place-items:center;
+      background:#0f172a;
+      font-weight:900;
+    }
+
+    .help-note{
+      color:var(--muted);
+      font-size:12px;
+      text-align:center;
+      margin-top:10px;
+    }
+
+    @media (max-width:900px){
+      .setup,.game-grid{grid-template-columns:1fr}
+      .score-panel{order:2}
+    }
+
+    @media (max-width:620px){
+      .app{padding:12px}
+      .panel{padding:14px}
+      .player-row{
+        grid-template-columns:minmax(0,1fr) 104px 44px;
+      }
+      .player-row .difficulty{grid-column:1 / 4}
+      .die{width:64px;height:64px;border-radius:14px}
+      .pip{width:10px;height:10px}
+      .dice{gap:8px;min-height:92px}
+      .totals{grid-template-columns:1fr 1fr}
+      .totals .grand{grid-column:1 / 3}
+      .score-table th:nth-child(2), .score-table td:nth-child(2){display:none}
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <header class="hero">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">🎲</div>
+      <div>
+        <h1>Whatzee</h1>
+        <p class="tagline">Roll it. Hold it. Score it. Own it.</p>
+      </div>
+    </div>
+    <div class="top-actions">
+      <button id="newGameBtn" class="btn ghost hidden" type="button">New Game</button>
+    </div>
+  </header>
+
+  <section id="setupScreen" class="setup">
+    <div class="panel">
+      <h2>Game Setup</h2>
+      <p class="setup-copy">Add up to 8 players. Humans and bots can play together. Bot difficulty is already wired in so you can play against them right now.</p>
+      <div id="playerRows"></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
+        <button id="addHumanBtn" class="btn" type="button">+ Human</button>
+        <button id="addBotBtn" class="btn" type="button">+ Bot</button>
+        <button id="startBtn" class="btn primary" type="button">Start Whatzee</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>How to Play</h2>
+      <ul class="rules">
+        <li>Roll five dice up to three times per turn.</li>
+        <li>Tap dice after a roll to hold them.</li>
+        <li>Choose one unused category to score and end the turn.</li>
+        <li>The upper section earns a 35-point bonus at 63 or more.</li>
+        <li>Whatzee scores 50 points for five matching dice.</li>
+        <li>After 13 rounds per player, the highest total wins.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="gameScreen" class="game hidden">
+    <div class="game-grid">
+      <div class="panel">
+        <div class="turn-card">
+          <div>
+            <div class="eyebrow">Current Turn</div>
+            <div id="turnTitle" class="turn-title">Player</div>
+            <div id="turnMeta" class="turn-meta"></div>
+          </div>
+          <div id="roundBadge" class="btn ghost" style="cursor:default"></div>
+        </div>
+
+        <div class="dice-wrap">
+          <div id="dice" class="dice" aria-label="Dice"></div>
+          <div class="roll-area">
+            <button id="rollBtn" class="btn primary" type="button">Roll Dice</button>
+          </div>
+          <div class="help-note">Tap a die to hold or release it between rolls.</div>
+        </div>
+
+        <div id="status" class="status" aria-live="polite">Roll the dice to begin.</div>
+      </div>
+
+      <div class="panel score-panel">
+        <div class="score-header">
+          <div>
+            <div class="eyebrow">Scorecard</div>
+            <h2 id="scorecardName" style="margin:0">Player</h2>
+          </div>
+        </div>
+
+        <div id="playerTabs" class="player-tabs"></div>
+
+        <table class="score-table">
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th>Rule</th>
+              <th style="text-align:right">Score</th>
+            </tr>
+          </thead>
+          <tbody id="scoreBody"></tbody>
+        </table>
+
+        <div class="totals">
+          <div class="total-box">
+            <div class="total-label">Upper</div>
+            <div id="upperTotal" class="total-number">0</div>
+          </div>
+          <div class="total-box">
+            <div class="total-label">Bonus</div>
+            <div id="bonusTotal" class="total-number">0</div>
+          </div>
+          <div class="total-box grand">
+            <div class="total-label">Grand Total</div>
+            <div id="grandTotal" class="total-number">0</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="resultsScreen" class="panel results hidden">
+    <div class="eyebrow">Final Results</div>
+    <div class="winner">🏆</div>
+    <h2 id="winnerText" style="font-size:32px;margin:4px 0 0"></h2>
+    <p id="winnerSub" class="setup-copy"></p>
+    <div id="standings" class="standings"></div>
+    <button id="playAgainBtn" class="btn primary" type="button">Play Again</button>
+  </section>
+</div>
+
+<script>
+(() => {
+  "use strict";
+
+  const categories = [
+    { key:"ones", name:"Ones", desc:"Add all 1s", section:"upper" },
+    { key:"twos", name:"Twos", desc:"Add all 2s", section:"upper" },
+    { key:"threes", name:"Threes", desc:"Add all 3s", section:"upper" },
+    { key:"fours", name:"Fours", desc:"Add all 4s", section:"upper" },
+    { key:"fives", name:"Fives", desc:"Add all 5s", section:"upper" },
+    { key:"sixes", name:"Sixes", desc:"Add all 6s", section:"upper" },
+    { key:"threeKind", name:"Three of a Kind", desc:"3 alike • total all dice", section:"lower" },
+    { key:"fourKind", name:"Four of a Kind", desc:"4 alike • total all dice", section:"lower" },
+    { key:"fullHouse", name:"Full House", desc:"3 of one + 2 of another • 25", section:"lower" },
+    { key:"smallStraight", name:"Small Straight", desc:"4 consecutive • 30", section:"lower" },
+    { key:"largeStraight", name:"Large Straight", desc:"5 consecutive • 40", section:"lower" },
+    { key:"whatzee", name:"Whatzee", desc:"5 alike • 50", section:"lower" },
+    { key:"chance", name:"Chance", desc:"Total all dice", section:"lower" }
+  ];
+
+  const upperKeys = categories.filter(c => c.section === "upper").map(c => c.key);
+  const MAX_PLAYERS = 8;
+  const BOT_NAMES = ["Rollbot","Dicey","Pip","W.H.A.T.","Lucky Circuit","Five-O","Dot Matrix","Reroll Rex"];
+
+  const state = {
+    setupPlayers: [],
+    players: [],
+    currentPlayer: 0,
+    round: 1,
+    rollsUsed: 0,
+    dice: [1,1,1,1,1],
+    held: [false,false,false,false,false],
+    hasRolled: false,
+    viewedPlayer: 0,
+    botBusy: false,
+    gameOver: false
+  };
+
+  const $ = id => document.getElementById(id);
+  const setupScreen = $("setupScreen");
+  const gameScreen = $("gameScreen");
+  const resultsScreen = $("resultsScreen");
+  const playerRows = $("playerRows");
+  const diceEl = $("dice");
+  const statusEl = $("status");
+  const rollBtn = $("rollBtn");
+  const newGameBtn = $("newGameBtn");
+
+  function makeSetupPlayer(type="human"){
+    const botCount = state.setupPlayers.filter(p => p.type === "bot").length;
+    return {
+      id: crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2),
+      name: type === "bot" ? BOT_NAMES[botCount % BOT_NAMES.length] : `Player ${state.setupPlayers.length + 1}`,
+      type,
+      difficulty:"normal"
+    };
+  }
+
+  function initSetup(){
+    state.setupPlayers = [makeSetupPlayer("human"), makeSetupPlayer("bot")];
+    renderSetup();
+  }
+
+  function renderSetup(){
+    playerRows.innerHTML = "";
+    state.setupPlayers.forEach((p, index) => {
+      const row = document.createElement("div");
+      row.className = "player-row";
+
+      const name = document.createElement("input");
+      name.type = "text";
+      name.maxLength = 20;
+      name.value = p.name;
+      name.setAttribute("aria-label", `Player ${index+1} name`);
+      name.addEventListener("input", () => p.name = name.value.trimStart());
+
+      const type = document.createElement("select");
+      type.setAttribute("aria-label", `Player ${index+1} type`);
+      type.innerHTML = `<option value="human">Human</option><option value="bot">Bot</option>`;
+      type.value = p.type;
+      type.addEventListener("change", () => {
+        p.type = type.value;
+        if (p.type === "bot" && (!p.name || /^Player \d+$/.test(p.name))) {
+          const botCount = state.setupPlayers.filter(x => x.type === "bot").indexOf(p);
+          p.name = BOT_NAMES[Math.max(0,botCount) % BOT_NAMES.length];
+        }
+        renderSetup();
+      });
+
+      const difficulty = document.createElement("select");
+      difficulty.className = "difficulty";
+      difficulty.setAttribute("aria-label", `Player ${index+1} bot difficulty`);
+      difficulty.innerHTML = `<option value="easy">Easy</option><option value="normal">Normal</option><option value="hard">Hard</option>`;
+      difficulty.value = p.difficulty;
+      difficulty.disabled = p.type !== "bot";
+      difficulty.addEventListener("change", () => p.difficulty = difficulty.value);
+
+      const remove = document.createElement("button");
+      remove.type = "button";
+      remove.className = "remove";
+      remove.textContent = "×";
+      remove.title = "Remove player";
+      remove.disabled = state.setupPlayers.length <= 1;
+      remove.addEventListener("click", () => {
+        state.setupPlayers.splice(index,1);
+        renderSetup();
+      });
+
+      row.append(name,type,difficulty,remove);
+      playerRows.appendChild(row);
+    });
+
+    $("addHumanBtn").disabled = state.setupPlayers.length >= MAX_PLAYERS;
+    $("addBotBtn").disabled = state.setupPlayers.length >= MAX_PLAYERS;
+  }
+
+  function addPlayer(type){
+    if (state.setupPlayers.length >= MAX_PLAYERS) return;
+    state.setupPlayers.push(makeSetupPlayer(type));
+    renderSetup();
+  }
+
+  function startGame(){
+    const cleaned = state.setupPlayers.map((p,i) => ({
+      ...p,
+      name: (p.name || `${p.type === "bot" ? "Bot" : "Player"} ${i+1}`).trim(),
+      scores:{}
+    }));
+
+    if (!cleaned.length) return;
+
+    state.players = cleaned;
+    state.currentPlayer = 0;
+    state.round = 1;
+    state.rollsUsed = 0;
+    state.dice = [1,1,1,1,1];
+    state.held = [false,false,false,false,false];
+    state.hasRolled = false;
+    state.viewedPlayer = 0;
+    state.botBusy = false;
+    state.gameOver = false;
+
+    setupScreen.classList.add("hidden");
+    resultsScreen.classList.add("hidden");
+    gameScreen.classList.remove("hidden");
+    newGameBtn.classList.remove("hidden");
+
+    renderAll();
+    maybeRunBot();
+  }
+
+  function pipPositions(value){
+    const map = {
+      1:["p5"],
+      2:["p1","p9"],
+      3:["p1","p5","p9"],
+      4:["p1","p3","p7","p9"],
+      5:["p1","p3","p5","p7","p9"],
+      6:["p1","p3","p4","p6","p7","p9"]
+    };
+    return map[value];
+  }
+
+  function renderDice(){
+    diceEl.innerHTML = "";
+    state.dice.forEach((value,index) => {
+      const die = document.createElement("button");
+      die.type = "button";
+      die.className = "die" + (state.held[index] ? " held" : "");
+      die.setAttribute("aria-label", `Die ${index+1}: ${value}${state.held[index] ? ", held" : ""}`);
+      die.disabled = !state.hasRolled || currentPlayer().type === "bot" || state.botBusy;
+      pipPositions(value).forEach(pos => {
+        const pip = document.createElement("span");
+        pip.className = `pip ${pos}`;
+        die.appendChild(pip);
+      });
+      die.addEventListener("click", () => toggleHold(index));
+      diceEl.appendChild(die);
+    });
+  }
+
+  function toggleHold(index){
+    if (!state.hasRolled || currentPlayer().type !== "human" || state.botBusy) return;
+    state.held[index] = !state.held[index];
+    renderDice();
+  }
+
+  function rollDice(){
+    if (state.rollsUsed >= 3 || state.botBusy) return;
+    for (let i=0;i<5;i++){
+      if (!state.held[i]) state.dice[i] = 1 + Math.floor(Math.random()*6);
+    }
+    state.rollsUsed++;
+    state.hasRolled = true;
+    renderAll();
+  }
+
+  function counts(dice){
+    const c = [0,0,0,0,0,0,0];
+    dice.forEach(v => c[v]++);
+    return c;
+  }
+
+  function sum(dice){ return dice.reduce((a,b) => a+b,0); }
+
+  function scoreCategory(key,dice){
+    const c = counts(dice);
+    const total = sum(dice);
+    const unique = [...new Set(dice)].sort((a,b)=>a-b);
+
+    switch(key){
+      case "ones": return c[1]*1;
+      case "twos": return c[2]*2;
+      case "threes": return c[3]*3;
+      case "fours": return c[4]*4;
+      case "fives": return c[5]*5;
+      case "sixes": return c[6]*6;
+      case "threeKind": return c.some(n => n >= 3) ? total : 0;
+      case "fourKind": return c.some(n => n >= 4) ? total : 0;
+      case "fullHouse": return c.includes(3) && c.includes(2) ? 25 : 0;
+      case "smallStraight": {
+        const s = unique.join("");
+        return (s.includes("1234") || s.includes("2345") || s.includes("3456")) ? 30 : 0;
+      }
+      case "largeStraight":
+        return (unique.join("") === "12345" || unique.join("") === "23456") ? 40 : 0;
+      case "whatzee": return c.some(n => n === 5) ? 50 : 0;
+      case "chance": return total;
+      default: return 0;
+    }
+  }
+
+  function upperSubtotal(player){
+    return upperKeys.reduce((t,k) => t + (player.scores[k] ?? 0),0);
+  }
+
+  function bonus(player){ return upperSubtotal(player) >= 63 ? 35 : 0; }
+
+  function grandTotal(player){
+    const base = categories.reduce((t,c) => t + (player.scores[c.key] ?? 0),0);
+    return base + bonus(player);
+  }
+
+  function currentPlayer(){ return state.players[state.currentPlayer]; }
+
+  function renderHeader(){
+    const p = currentPlayer();
+    $("turnTitle").textContent = `${p.name}${p.type === "bot" ? " 🤖" : ""}`;
+    $("turnMeta").textContent = `${p.type === "bot" ? p.difficulty[0].toUpperCase()+p.difficulty.slice(1)+" bot" : "Human player"} • ${state.rollsUsed}/3 rolls used`;
+    $("roundBadge").textContent = `Round ${state.round} / 13`;
+
+    rollBtn.textContent = state.rollsUsed === 0 ? "Roll Dice" : state.rollsUsed < 3 ? `Roll Again (${3-state.rollsUsed} left)` : "No Rolls Left";
+    rollBtn.disabled = state.rollsUsed >= 3 || p.type === "bot" || state.botBusy;
+
+    if (!state.hasRolled){
+      statusEl.textContent = p.type === "bot" ? `${p.name} is getting ready to roll…` : "Roll the dice to begin.";
+    } else if (p.type === "human") {
+      statusEl.textContent = state.rollsUsed < 3
+        ? "Hold any dice you want, roll again, or choose a scoring category."
+        : "Choose a scoring category to finish your turn.";
+    }
+  }
+
+  function renderTabs(){
+    const tabs = $("playerTabs");
+    tabs.innerHTML = "";
+    state.players.forEach((p,i) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "tab" + (state.viewedPlayer === i ? " active" : "");
+      b.textContent = p.name + (p.type === "bot" ? " 🤖" : "");
+      b.addEventListener("click", () => {
+        state.viewedPlayer = i;
+        renderScorecard();
+      });
+      tabs.appendChild(b);
+    });
+  }
+
+  function renderScorecard(){
+    const p = state.players[state.viewedPlayer];
+    $("scorecardName").textContent = p.name;
+    renderTabs();
+
+    const body = $("scoreBody");
+    body.innerHTML = "";
+
+    ["upper","lower"].forEach(section => {
+      const sectionRow = document.createElement("tr");
+      sectionRow.className = "section-row";
+      sectionRow.innerHTML = `<td colspan="3">${section === "upper" ? "Upper Section" : "Lower Section"}</td>`;
+      body.appendChild(sectionRow);
+
+      categories.filter(c => c.section === section).forEach(cat => {
+        const tr = document.createElement("tr");
+        const used = Object.prototype.hasOwnProperty.call(p.scores,cat.key);
+
+        const nameTd = document.createElement("td");
+        nameTd.innerHTML = `<span class="category-name">${cat.name}</span><span class="category-desc">${cat.desc}</span>`;
+
+        const ruleTd = document.createElement("td");
+        ruleTd.textContent = cat.desc;
+
+        const scoreTd = document.createElement("td");
+        scoreTd.className = "score-value";
+
+        const canScore = state.viewedPlayer === state.currentPlayer &&
+                         currentPlayer().type === "human" &&
+                         state.hasRolled &&
+                         !used &&
+                         !state.botBusy &&
+                         !state.gameOver;
+
+        if (canScore){
+          const preview = scoreCategory(cat.key,state.dice);
+          const b = document.createElement("button");
+          b.type = "button";
+          b.className = "score-btn available";
+          b.textContent = preview;
+          b.title = `Score ${preview} in ${cat.name}`;
+          b.addEventListener("click", () => commitScore(cat.key));
+          scoreTd.appendChild(b);
+        } else {
+          scoreTd.textContent = used ? p.scores[cat.key] : "—";
+        }
+
+        tr.append(nameTd,ruleTd,scoreTd);
+        body.appendChild(tr);
+      });
+    });
+
+    $("upperTotal").textContent = upperSubtotal(p);
+    $("bonusTotal").textContent = bonus(p);
+    $("grandTotal").textContent = grandTotal(p);
+  }
+
+  function renderAll(){
+    state.viewedPlayer = Math.min(state.viewedPlayer,state.players.length-1);
+    renderHeader();
+    renderDice();
+    renderScorecard();
+  }
+
+  function commitScore(key){
+    const p = currentPlayer();
+    if (!state.hasRolled || Object.prototype.hasOwnProperty.call(p.scores,key)) return;
+    const value = scoreCategory(key,state.dice);
+    p.scores[key] = value;
+    statusEl.textContent = `${p.name} scored ${value} in ${categories.find(c=>c.key===key).name}.`;
+    advanceTurn();
+  }
+
+  function advanceTurn(){
+    if (state.players.every(p => categories.every(c => Object.prototype.hasOwnProperty.call(p.scores,c.key)))) {
+      finishGame();
+      return;
+    }
+
+    state.currentPlayer++;
+    if (state.currentPlayer >= state.players.length){
+      state.currentPlayer = 0;
+      state.round++;
+    }
+
+    state.rollsUsed = 0;
+    state.hasRolled = false;
+    state.held = [false,false,false,false,false];
+    state.dice = [1,1,1,1,1];
+    state.viewedPlayer = state.currentPlayer;
+    state.botBusy = false;
+
+    setTimeout(() => {
+      renderAll();
+      maybeRunBot();
+    }, 450);
+  }
+
+  function availableCategories(player){
+    return categories.filter(c => !Object.prototype.hasOwnProperty.call(player.scores,c.key));
+  }
+
+  function categoryValueWeight(cat,value,dice,player,difficulty){
+    let score = value;
+    const c = counts(dice);
+    const total = sum(dice);
+
+    if (cat.section === "upper"){
+      const face = upperKeys.indexOf(cat.key)+1;
+      score += c[face] * (difficulty === "hard" ? 2.3 : difficulty === "normal" ? 1.3 : .5);
+      const needed = Math.max(0,63-upperSubtotal(player));
+      if (difficulty === "hard" && needed > 0) score += Math.min(6, value/3);
+    }
+
+    if (cat.key === "whatzee" && value === 50) score += 40;
+    if (cat.key === "largeStraight" && value === 40) score += 22;
+    if (cat.key === "smallStraight" && value === 30) score += 14;
+    if (cat.key === "fullHouse" && value === 25) score += 10;
+    if (cat.key === "chance" && total < 20) score -= difficulty === "hard" ? 10 : 4;
+
+    if (value === 0){
+      const sacrificial = ["ones","twos","threeKind","fourKind","whatzee"];
+      score -= sacrificial.includes(cat.key) ? 1 : 4;
+      if (difficulty === "hard" && cat.key === "whatzee") score -= 8;
+    }
+    return score;
+  }
+
+  function chooseBotScore(player,difficulty){
+    const avail = availableCategories(player);
+    const scored = avail.map(cat => ({
+      cat,
+      value:scoreCategory(cat.key,state.dice)
+    }));
+
+    if (difficulty === "easy" && Math.random() < .25){
+      return scored[Math.floor(Math.random()*scored.length)].cat.key;
+    }
+
+    scored.sort((a,b) =>
+      categoryValueWeight(b.cat,b.value,state.dice,player,difficulty) -
+      categoryValueWeight(a.cat,a.value,state.dice,player,difficulty)
+    );
+    return scored[0].cat.key;
+  }
+
+  function chooseBotHolds(player,difficulty){
+    const d = state.dice.slice();
+    const c = counts(d);
+    const avail = new Set(availableCategories(player).map(x => x.key));
+
+    if (difficulty === "easy"){
+      const holdChance = .35;
+      return d.map(() => Math.random() < holdChance);
+    }
+
+    const maxCount = Math.max(...c);
+    const bestFace = c.findIndex(v => v === maxCount);
+
+    if (maxCount >= 3 && (avail.has("whatzee") || avail.has("fourKind") || avail.has("threeKind") || avail.has(upperKeys[bestFace-1]))){
+      return d.map(v => v === bestFace);
+    }
+
+    const uniq = [...new Set(d)].sort((a,b)=>a-b);
+    const straightSets = [
+      [1,2,3,4],[2,3,4,5],[3,4,5,6],[1,2,3,4,5],[2,3,4,5,6]
+    ];
+
+    if (avail.has("largeStraight") || avail.has("smallStraight")){
+      let bestSet = null, bestMatch = -1;
+      for (const set of straightSets){
+        const match = set.filter(v => uniq.includes(v)).length;
+        if (match > bestMatch){ bestMatch = match; bestSet = set; }
+      }
+      if (bestMatch >= 3){
+        const used = new Set();
+        return d.map(v => {
+          if (bestSet.includes(v) && !used.has(v)){ used.add(v); return true; }
+          return false;
+        });
+      }
+    }
+
+    const pairFaces = [];
+    for (let face=1;face<=6;face++) if (c[face] >= 2) pairFaces.push(face);
+
+    if (avail.has("fullHouse") && pairFaces.length){
+      const keep = new Set(pairFaces.slice(0,2));
+      return d.map(v => keep.has(v));
+    }
+
+    if (maxCount >= 2){
+      return d.map(v => v === bestFace);
+    }
+
+    if (difficulty === "hard"){
+      const high = Math.max(...d);
+      return d.map(v => v === high && v >= 4);
+    }
+
+    return d.map(v => v >= 5);
+  }
+
+  function shouldBotStopEarly(player,difficulty){
+    if (state.rollsUsed >= 3) return true;
+    const avail = availableCategories(player);
+    const best = Math.max(...avail.map(c => scoreCategory(c.key,state.dice)));
+
+    if (best >= 50) return true;
+    if (best >= 40 && difficulty !== "easy") return true;
+    if (best >= 30 && state.rollsUsed >= 2 && difficulty === "normal") return true;
+    if (best >= 25 && state.rollsUsed >= 2 && difficulty === "easy") return Math.random() < .6;
+    return false;
+  }
+
+  async function maybeRunBot(){
+    const p = currentPlayer();
+    if (!p || p.type !== "bot" || state.gameOver) return;
+
+    state.botBusy = true;
+    renderAll();
+
+    const pause = ms => new Promise(r => setTimeout(r,ms));
+
+    statusEl.innerHTML = `<span class="bot-thinking">🤖 ${p.name} is thinking…</span>`;
+    await pause(650);
+
+    while (state.rollsUsed < 3){
+      for (let i=0;i<5;i++){
+        if (!state.held[i]) state.dice[i] = 1 + Math.floor(Math.random()*6);
+      }
+      state.rollsUsed++;
+      state.hasRolled = true;
+      renderDice();
+      renderHeader();
+      renderScorecard();
+      statusEl.textContent = `${p.name} rolled ${state.dice.join(", ")}.`;
+      await pause(700);
+
+      if (shouldBotStopEarly(p,p.difficulty)) break;
+
+      state.held = chooseBotHolds(p,p.difficulty);
+      renderDice();
+      const heldValues = state.dice.filter((_,i) => state.held[i]);
+      statusEl.textContent = heldValues.length
+        ? `${p.name} holds ${heldValues.join(", ")}.`
+        : `${p.name} keeps nothing and rerolls all five.`;
+      await pause(650);
+    }
+
+    const key = chooseBotScore(p,p.difficulty);
+    const val = scoreCategory(key,state.dice);
+    p.scores[key] = val;
+    renderScorecard();
+    statusEl.textContent = `${p.name} scores ${val} in ${categories.find(c=>c.key===key).name}.`;
+    await pause(800);
+
+    state.botBusy = false;
+    advanceTurn();
+  }
+
+  function finishGame(){
+    state.gameOver = true;
+    state.botBusy = false;
+    gameScreen.classList.add("hidden");
+    resultsScreen.classList.remove("hidden");
+
+    const sorted = [...state.players].sort((a,b) => grandTotal(b)-grandTotal(a));
+    const best = grandTotal(sorted[0]);
+    const winners = sorted.filter(p => grandTotal(p) === best);
+
+    $("winnerText").textContent = winners.length === 1
+      ? `${winners[0].name} wins Whatzee!`
+      : `${winners.map(p=>p.name).join(" & ")} tie for the win!`;
+
+    $("winnerSub").textContent = `Winning score: ${best} points`;
+
+    const standings = $("standings");
+    standings.innerHTML = "";
+    sorted.forEach((p,i) => {
+      const row = document.createElement("div");
+      row.className = "standing";
+      row.innerHTML = `
+        <div class="place">${i+1}</div>
+        <div><strong>${p.name}${p.type==="bot" ? " 🤖" : ""}</strong><div style="color:var(--muted);font-size:12px">${p.type==="bot" ? p.difficulty+" bot" : "human"}</div></div>
+        <div style="font-size:24px;font-weight:950">${grandTotal(p)}</div>`;
+      standings.appendChild(row);
+    });
+  }
+
+  function resetToSetup(){
+    state.gameOver = false;
+    state.botBusy = false;
+    gameScreen.classList.add("hidden");
+    resultsScreen.classList.add("hidden");
+    setupScreen.classList.remove("hidden");
+    newGameBtn.classList.add("hidden");
+    renderSetup();
+  }
+
+  $("addHumanBtn").addEventListener("click", () => addPlayer("human"));
+  $("addBotBtn").addEventListener("click", () => addPlayer("bot"));
+  $("startBtn").addEventListener("click", startGame);
+  rollBtn.addEventListener("click", rollDice);
+  newGameBtn.addEventListener("click", resetToSetup);
+  $("playAgainBtn").addEventListener("click", resetToSetup);
+
+  initSetup();
+})();
+</script>
+</body>
+</html>
