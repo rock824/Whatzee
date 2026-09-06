@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#111827" />
+  <meta name="theme-color" content="#0b1020" />
   <title>Whatzee</title>
   <style>
     :root{
@@ -17,17 +17,28 @@
       --good:#22c55e;
       --warn:#f59e0b;
       --danger:#ef4444;
+      --gold:#facc15;
       --border:rgba(255,255,255,.10);
       --shadow:0 18px 50px rgba(0,0,0,.35);
     }
 
     *{box-sizing:border-box}
-    html,body{margin:0;padding:0;background:linear-gradient(180deg,#08101f,#0b1020 35%,#0b1020);color:var(--text);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    html,body{
+      margin:0;
+      padding:0;
+      background:
+        radial-gradient(circle at 20% 0%,rgba(139,92,246,.12),transparent 30%),
+        radial-gradient(circle at 80% 10%,rgba(56,189,248,.10),transparent 28%),
+        linear-gradient(180deg,#08101f,#0b1020 35%,#0b1020);
+      color:var(--text);
+      font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      min-height:100%;
+    }
     body{min-height:100vh}
-
     button,input,select{font:inherit}
     button{cursor:pointer}
     button:disabled{cursor:not-allowed;opacity:.45}
+    .hidden{display:none!important}
 
     .app{
       width:min(1180px,100%);
@@ -43,32 +54,16 @@
       flex-wrap:wrap;
       margin-bottom:16px;
     }
-
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:14px;
-    }
-
+    .brand{display:flex;align-items:center;gap:14px}
     .logo{
-      width:58px;
-      height:58px;
-      border-radius:18px;
-      display:grid;
-      place-items:center;
-      font-size:32px;
+      width:58px;height:58px;border-radius:18px;
+      display:grid;place-items:center;font-size:32px;
       background:linear-gradient(135deg,var(--accent),var(--accent2));
-      box-shadow:var(--shadow);
+      box-shadow:var(--shadow)
     }
-
     h1{margin:0;font-size:clamp(28px,5vw,44px);letter-spacing:-.03em}
     .tagline{margin:4px 0 0;color:var(--muted);font-size:14px}
-
-    .top-actions{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-    }
+    .top-actions{display:flex;gap:10px;flex-wrap:wrap}
 
     .btn{
       border:1px solid var(--border);
@@ -81,16 +76,11 @@
       transition:.15s ease;
     }
     .btn:hover{transform:translateY(-1px);border-color:rgba(255,255,255,.22)}
-    .btn.primary{
-      background:linear-gradient(135deg,var(--accent),#6d5dfc);
-      border-color:transparent;
-    }
-    .btn.good{
-      background:linear-gradient(135deg,#16a34a,#22c55e);
-      border-color:transparent;
-    }
+    .btn.primary{background:linear-gradient(135deg,var(--accent),#6d5dfc);border-color:transparent}
+    .btn.good{background:linear-gradient(135deg,#16a34a,#22c55e);border-color:transparent}
     .btn.ghost{background:transparent}
     .btn.danger{background:#391b24;border-color:#7f1d1d}
+    .btn.icon{width:44px;padding:0;display:grid;place-items:center;font-size:19px}
 
     .panel{
       background:rgba(19,26,44,.96);
@@ -100,12 +90,7 @@
       box-shadow:var(--shadow);
     }
 
-    .setup{
-      display:grid;
-      grid-template-columns:1.1fr .9fr;
-      gap:16px;
-    }
-
+    .setup{display:grid;grid-template-columns:1.1fr .9fr;gap:16px}
     .setup h2,.game h2{margin:0 0 10px}
     .setup-copy{color:var(--muted);margin:0 0 16px;line-height:1.5}
 
@@ -116,7 +101,6 @@
       margin-bottom:10px;
       align-items:center;
     }
-
     input,select{
       width:100%;
       border:1px solid var(--border);
@@ -128,25 +112,48 @@
       outline:none;
     }
     input:focus,select:focus{border-color:var(--accent2);box-shadow:0 0 0 3px rgba(56,189,248,.12)}
-
     .remove{
-      width:44px;
-      height:44px;
-      border-radius:10px;
+      width:44px;height:44px;border-radius:10px;border:1px solid var(--border);
+      background:#25151c;color:#fecaca;font-size:20px
+    }
+
+    .options{
+      display:grid;
+      gap:10px;
+      margin-top:16px;
+      padding-top:16px;
+      border-top:1px solid var(--border);
+    }
+    .option-row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      background:#0f172a;
       border:1px solid var(--border);
-      background:#25151c;
-      color:#fecaca;
-      font-size:20px;
+      border-radius:12px;
+      padding:10px 12px;
     }
-
-    .rules{
-      margin:0;
-      padding-left:20px;
-      color:#cbd5e1;
-      line-height:1.6;
+    .option-row label{font-weight:800}
+    .option-row small{display:block;color:var(--muted);margin-top:2px}
+    .switch{position:relative;width:50px;height:28px;flex:none}
+    .switch input{opacity:0;width:0;height:0}
+    .slider{
+      position:absolute;inset:0;border-radius:999px;background:#334155;
+      transition:.2s
     }
+    .slider::before{
+      content:"";position:absolute;width:22px;height:22px;left:3px;top:3px;
+      border-radius:50%;background:white;transition:.2s
+    }
+    .switch input:checked + .slider{background:var(--accent)}
+    .switch input:checked + .slider::before{transform:translateX(22px)}
 
-    .hidden{display:none!important}
+    .rules{margin:0;padding-left:20px;color:#cbd5e1;line-height:1.6}
+    .rules-note{
+      margin-top:16px;padding:12px;border:1px solid rgba(250,204,21,.25);
+      background:rgba(250,204,21,.07);border-radius:12px;color:#fde68a;font-size:13px
+    }
 
     .game-grid{
       display:grid;
@@ -154,284 +161,190 @@
       gap:16px;
       align-items:start;
     }
-
-    .turn-card{
-      display:flex;
-      justify-content:space-between;
-      gap:14px;
-      align-items:flex-start;
-      flex-wrap:wrap;
-      margin-bottom:14px;
-    }
-
+    .turn-card{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;flex-wrap:wrap;margin-bottom:14px}
     .eyebrow{
-      color:var(--accent2);
-      font-weight:900;
-      text-transform:uppercase;
-      letter-spacing:.1em;
-      font-size:11px;
-      margin-bottom:3px;
+      color:var(--accent2);font-weight:900;text-transform:uppercase;
+      letter-spacing:.1em;font-size:11px;margin-bottom:3px
     }
+    .turn-title{font-size:26px;font-weight:900;margin:0}
+    .turn-meta{color:var(--muted);font-size:14px;margin-top:4px}
 
-    .turn-title{
-      font-size:26px;
-      font-weight:900;
-      margin:0;
+    .turn-banner{
+      margin:0 0 12px;
+      border-radius:13px;
+      padding:10px 14px;
+      text-align:center;
+      font-weight:950;
+      font-size:16px;
+      background:linear-gradient(90deg,rgba(139,92,246,.16),rgba(56,189,248,.12));
+      border:1px solid rgba(139,92,246,.25);
+      animation:fadeBanner .5s ease both;
     }
+    @keyframes fadeBanner{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
 
-    .turn-meta{
-      color:var(--muted);
-      font-size:14px;
-      margin-top:4px;
-    }
-
-    .dice-wrap{
-      padding:18px 0 8px;
-    }
-
+    .dice-wrap{padding:18px 0 8px}
     .dice{
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      gap:12px;
-      flex-wrap:wrap;
-      min-height:116px;
+      display:flex;justify-content:center;align-items:center;gap:12px;flex-wrap:wrap;
+      min-height:116px
     }
-
     .die{
-      width:88px;
-      height:88px;
-      position:relative;
-      border-radius:18px;
-      background:#f8fafc;
-      border:4px solid #e2e8f0;
+      width:88px;height:88px;position:relative;border-radius:18px;
+      background:#f8fafc;border:4px solid #e2e8f0;
       box-shadow:0 10px 18px rgba(0,0,0,.28);
       transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease;
-      color:#0f172a;
-      padding:0;
+      color:#0f172a;padding:0
     }
-
     .die:hover{transform:translateY(-2px)}
     .die.held{
       border-color:var(--accent2);
       box-shadow:0 0 0 4px rgba(56,189,248,.18),0 12px 20px rgba(0,0,0,.3);
-      transform:translateY(-4px);
+      transform:translateY(-4px)
     }
-
     .die.held::after{
-      content:"HELD";
-      position:absolute;
-      left:50%;
-      bottom:-25px;
-      transform:translateX(-50%);
-      font-size:10px;
-      font-weight:900;
-      letter-spacing:.12em;
-      color:var(--accent2);
+      content:"HELD";position:absolute;left:50%;bottom:-25px;transform:translateX(-50%);
+      font-size:10px;font-weight:900;letter-spacing:.12em;color:var(--accent2)
+    }
+    .die.rolling{animation:shake .42s ease}
+    @keyframes shake{
+      0%,100%{transform:translate(0) rotate(0)}
+      20%{transform:translate(-5px,2px) rotate(-6deg)}
+      40%{transform:translate(4px,-2px) rotate(5deg)}
+      60%{transform:translate(-3px,-1px) rotate(-4deg)}
+      80%{transform:translate(4px,2px) rotate(6deg)}
+    }
+    @media (prefers-reduced-motion:reduce){
+      .die.rolling,.celebration,.confetti-piece,.turn-banner{animation:none!important}
     }
 
     .pip{
-      position:absolute;
-      width:14px;
-      height:14px;
-      border-radius:50%;
-      background:#111827;
-      transform:translate(-50%,-50%);
+      position:absolute;width:14px;height:14px;border-radius:50%;background:#111827;
+      transform:translate(-50%,-50%)
     }
-    .p1{left:25%;top:25%}
-    .p2{left:50%;top:25%}
-    .p3{left:75%;top:25%}
-    .p4{left:25%;top:50%}
-    .p5{left:50%;top:50%}
-    .p6{left:75%;top:50%}
-    .p7{left:25%;top:75%}
-    .p8{left:50%;top:75%}
-    .p9{left:75%;top:75%}
+    .p1{left:25%;top:25%}.p2{left:50%;top:25%}.p3{left:75%;top:25%}
+    .p4{left:25%;top:50%}.p5{left:50%;top:50%}.p6{left:75%;top:50%}
+    .p7{left:25%;top:75%}.p8{left:50%;top:75%}.p9{left:75%;top:75%}
 
-    .roll-area{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:12px;
-      flex-wrap:wrap;
-      margin-top:26px;
-    }
-
+    .roll-area{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:26px}
     .status{
-      margin-top:14px;
-      min-height:48px;
-      border:1px solid var(--border);
-      background:#0f172a;
-      border-radius:12px;
-      padding:12px 14px;
-      color:#dbeafe;
-      line-height:1.45;
+      margin-top:14px;min-height:48px;border:1px solid var(--border);background:#0f172a;
+      border-radius:12px;padding:12px 14px;color:#dbeafe;line-height:1.45
     }
+    .bot-thinking{display:inline-flex;align-items:center;gap:8px;color:#c4b5fd;font-weight:800}
 
-    .bot-thinking{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      color:#c4b5fd;
-      font-weight:800;
-    }
-
-    .score-panel{
-      overflow:hidden;
-    }
-
-    .score-header{
-      display:flex;
-      justify-content:space-between;
-      gap:12px;
-      align-items:center;
-      margin-bottom:12px;
-    }
-
-    .player-tabs{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      margin-bottom:12px;
-    }
-
+    .score-panel{overflow:hidden}
+    .score-header{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:12px}
+    .player-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
     .tab{
-      border:1px solid var(--border);
-      background:#0f172a;
-      color:#cbd5e1;
-      padding:8px 11px;
-      border-radius:999px;
-      font-weight:800;
+      border:1px solid var(--border);background:#0f172a;color:#cbd5e1;
+      padding:8px 11px;border-radius:999px;font-weight:800
     }
     .tab.active{background:rgba(139,92,246,.22);border-color:#8b5cf6;color:white}
 
-    .score-table{
-      width:100%;
-      border-collapse:collapse;
-      font-size:14px;
-    }
-
-    .score-table th,.score-table td{
-      border-bottom:1px solid var(--border);
-      padding:9px 8px;
-      text-align:left;
-      vertical-align:middle;
-    }
-    .score-table th{
-      color:var(--muted);
-      font-size:11px;
-      text-transform:uppercase;
-      letter-spacing:.08em;
-    }
-
+    .score-table{width:100%;border-collapse:collapse;font-size:14px}
+    .score-table th,.score-table td{border-bottom:1px solid var(--border);padding:9px 8px;text-align:left;vertical-align:middle}
+    .score-table th{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em}
     .score-table tr:last-child td{border-bottom:0}
     .category-name{font-weight:800}
     .category-desc{display:block;color:var(--muted);font-size:11px;font-weight:500;margin-top:2px}
-
     .score-btn{
-      min-width:62px;
-      border:1px solid var(--border);
-      background:#19243b;
-      color:white;
-      padding:7px 10px;
-      border-radius:9px;
-      font-weight:900;
+      min-width:62px;border:1px solid var(--border);background:#19243b;color:white;
+      padding:7px 10px;border-radius:9px;font-weight:900;position:relative
     }
-
-    .score-btn.available{
-      border-color:rgba(34,197,94,.5);
-      background:rgba(34,197,94,.12);
+    .score-btn.available{border-color:rgba(34,197,94,.5);background:rgba(34,197,94,.12)}
+    .score-btn.best{
+      border-color:var(--gold);
+      background:rgba(250,204,21,.16);
+      box-shadow:0 0 0 2px rgba(250,204,21,.09)
     }
-
-    .score-value{
-      text-align:right;
-      font-weight:900;
-      font-variant-numeric:tabular-nums;
+    .score-btn.best::after{
+      content:"★";position:absolute;right:-7px;top:-9px;color:var(--gold);font-size:15px
     }
-
+    .score-value{text-align:right;font-weight:900;font-variant-numeric:tabular-nums}
     .section-row td{
-      background:rgba(255,255,255,.025);
-      color:#c4b5fd;
-      font-weight:900;
-      text-transform:uppercase;
-      letter-spacing:.08em;
-      font-size:11px;
+      background:rgba(255,255,255,.025);color:#c4b5fd;font-weight:900;
+      text-transform:uppercase;letter-spacing:.08em;font-size:11px
     }
 
-    .totals{
-      margin-top:12px;
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
-      gap:8px;
-    }
-    .total-box{
-      background:#0f172a;
-      border:1px solid var(--border);
-      border-radius:12px;
-      padding:10px;
-      text-align:center;
-    }
+    .totals{margin-top:12px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+    .total-box{background:#0f172a;border:1px solid var(--border);border-radius:12px;padding:10px;text-align:center}
     .total-label{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:800}
     .total-number{font-size:22px;font-weight:950;margin-top:2px}
 
-    .results{
-      text-align:center;
-      padding:28px;
-    }
-    .winner{
-      font-size:clamp(34px,8vw,68px);
-      margin:6px 0;
+    .bonus-chip{
+      display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:7px 10px;
+      border-radius:999px;background:rgba(250,204,21,.08);border:1px solid rgba(250,204,21,.18);
+      color:#fde68a;font-size:12px;font-weight:800
     }
 
-    .standings{
-      width:min(620px,100%);
-      margin:18px auto;
-      text-align:left;
-    }
+    .results{text-align:center;padding:28px}
+    .winner{font-size:clamp(34px,8vw,68px);margin:6px 0}
+    .standings{width:min(700px,100%);margin:18px auto;text-align:left}
     .standing{
-      display:grid;
-      grid-template-columns:44px 1fr auto;
-      gap:12px;
-      align-items:center;
-      padding:12px;
-      border-bottom:1px solid var(--border);
+      display:grid;grid-template-columns:44px 1fr auto;gap:12px;align-items:center;
+      padding:12px;border-bottom:1px solid var(--border)
     }
-
     .place{
-      width:34px;
-      height:34px;
-      border-radius:50%;
-      display:grid;
-      place-items:center;
-      background:#0f172a;
-      font-weight:900;
+      width:34px;height:34px;border-radius:50%;display:grid;place-items:center;
+      background:#0f172a;font-weight:900
     }
+    .stats-grid{
+      display:grid;grid-template-columns:repeat(3,1fr);gap:10px;
+      width:min(700px,100%);margin:18px auto
+    }
+    .stat-card{
+      background:#0f172a;border:1px solid var(--border);border-radius:14px;padding:12px;text-align:center
+    }
+    .stat-card strong{display:block;font-size:24px}
+    .stat-card span{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em}
 
-    .help-note{
-      color:var(--muted);
-      font-size:12px;
-      text-align:center;
-      margin-top:10px;
+    .help-note{color:var(--muted);font-size:12px;text-align:center;margin-top:10px}
+
+    .celebration{
+      position:fixed;inset:0;display:grid;place-items:center;z-index:50;
+      background:rgba(4,8,18,.72);backdrop-filter:blur(3px);
+      animation:celebrateIn .25s ease both;
+    }
+    .celebration-card{
+      text-align:center;padding:28px;border-radius:24px;
+      background:linear-gradient(145deg,#261b4a,#132b43);
+      border:1px solid rgba(255,255,255,.16);
+      box-shadow:0 30px 80px rgba(0,0,0,.5);
+      width:min(520px,calc(100% - 30px))
+    }
+    .celebration-title{
+      font-size:clamp(42px,10vw,84px);font-weight:1000;letter-spacing:-.06em;
+      background:linear-gradient(90deg,#facc15,#38bdf8,#c084fc);
+      -webkit-background-clip:text;background-clip:text;color:transparent;
+      margin:0
+    }
+    .celebration-sub{font-size:20px;font-weight:900;margin-top:8px}
+    @keyframes celebrateIn{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:scale(1)}}
+
+    .confetti{
+      position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:49
+    }
+    .confetti-piece{
+      position:absolute;top:-20px;width:10px;height:16px;border-radius:2px;
+      animation:fall 1.8s linear forwards
+    }
+    @keyframes fall{
+      to{transform:translateY(110vh) rotate(700deg);opacity:.9}
     }
 
     @media (max-width:900px){
       .setup,.game-grid{grid-template-columns:1fr}
       .score-panel{order:2}
     }
-
     @media (max-width:620px){
-      .app{padding:12px}
-      .panel{padding:14px}
-      .player-row{
-        grid-template-columns:minmax(0,1fr) 104px 44px;
-      }
+      .app{padding:12px}.panel{padding:14px}
+      .player-row{grid-template-columns:minmax(0,1fr) 104px 44px}
       .player-row .difficulty{grid-column:1 / 4}
       .die{width:64px;height:64px;border-radius:14px}
-      .pip{width:10px;height:10px}
-      .dice{gap:8px;min-height:92px}
+      .pip{width:10px;height:10px}.dice{gap:8px;min-height:92px}
       .totals{grid-template-columns:1fr 1fr}
-      .totals .grand{grid-column:1 / 3}
-      .score-table th:nth-child(2), .score-table td:nth-child(2){display:none}
+      .score-table th:nth-child(2),.score-table td:nth-child(2){display:none}
+      .stats-grid{grid-template-columns:1fr}
+      .hero{align-items:flex-start}
     }
   </style>
 </head>
@@ -446,6 +359,7 @@
       </div>
     </div>
     <div class="top-actions">
+      <button id="soundBtn" class="btn icon hidden" type="button" title="Toggle sound" aria-label="Toggle sound">🔊</button>
       <button id="newGameBtn" class="btn ghost hidden" type="button">New Game</button>
     </div>
   </header>
@@ -453,9 +367,33 @@
   <section id="setupScreen" class="setup">
     <div class="panel">
       <h2>Game Setup</h2>
-      <p class="setup-copy">Add up to 8 players. Humans and bots can play together. Bot difficulty is already wired in so you can play against them right now.</p>
+      <p class="setup-copy">Add up to 8 players. Humans and bots can play together, and bots support Easy, Normal, and Hard strategies.</p>
       <div id="playerRows"></div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
+
+      <div class="options">
+        <div class="option-row">
+          <div><label for="suggestToggle">Score suggestions</label><small>Highlight the best available category.</small></div>
+          <label class="switch"><input id="suggestToggle" type="checkbox" checked><span class="slider"></span></label>
+        </div>
+        <div class="option-row">
+          <div><label for="animateToggle">Dice animations</label><small>Shake dice briefly before each result.</small></div>
+          <label class="switch"><input id="animateToggle" type="checkbox" checked><span class="slider"></span></label>
+        </div>
+        <div class="option-row">
+          <div><label for="soundToggle">Sound effects</label><small>Rolls, scores, and Whatzee celebrations.</small></div>
+          <label class="switch"><input id="soundToggle" type="checkbox" checked><span class="slider"></span></label>
+        </div>
+        <div class="option-row">
+          <div><label for="celebrateToggle">Whatzee celebrations</label><small>Big celebration when five matching dice hit.</small></div>
+          <label class="switch"><input id="celebrateToggle" type="checkbox" checked><span class="slider"></span></label>
+        </div>
+        <div class="option-row">
+          <div><label for="botAnimToggle">Bot turn animations</label><small>Watch bots roll, think, and hold instead of skipping instantly.</small></div>
+          <label class="switch"><input id="botAnimToggle" type="checkbox" checked><span class="slider"></span></label>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px">
         <button id="addHumanBtn" class="btn" type="button">+ Human</button>
         <button id="addBotBtn" class="btn" type="button">+ Bot</button>
         <button id="startBtn" class="btn primary" type="button">Start Whatzee</button>
@@ -469,13 +407,18 @@
         <li>Tap dice after a roll to hold them.</li>
         <li>Choose one unused category to score and end the turn.</li>
         <li>The upper section earns a 35-point bonus at 63 or more.</li>
-        <li>Whatzee scores 50 points for five matching dice.</li>
+        <li>Your first Whatzee scores 50 points.</li>
+        <li>Extra Whatzees after a scored 50-point Whatzee earn a 100-point bonus.</li>
         <li>After 13 rounds per player, the highest total wins.</li>
       </ul>
+      <div class="rules-note">
+        Extra Whatzee bonuses use the familiar bonus/Joker-style behavior: the 100-point bonus is awarded only after the Whatzee box already contains 50.
+      </div>
     </div>
   </section>
 
   <section id="gameScreen" class="game hidden">
+    <div id="turnBanner" class="turn-banner hidden"></div>
     <div class="game-grid">
       <div class="panel">
         <div class="turn-card">
@@ -503,6 +446,7 @@
           <div>
             <div class="eyebrow">Scorecard</div>
             <h2 id="scorecardName" style="margin:0">Player</h2>
+            <div id="whatzeeBonusChip" class="bonus-chip hidden">⭐ Extra Whatzee bonuses: <span id="whatzeeBonusCount">0</span></div>
           </div>
         </div>
 
@@ -528,7 +472,11 @@
             <div class="total-label">Bonus</div>
             <div id="bonusTotal" class="total-number">0</div>
           </div>
-          <div class="total-box grand">
+          <div class="total-box">
+            <div class="total-label">Whatzee Bonus</div>
+            <div id="whatzeeBonusTotal" class="total-number">0</div>
+          </div>
+          <div class="total-box">
             <div class="total-label">Grand Total</div>
             <div id="grandTotal" class="total-number">0</div>
           </div>
@@ -542,9 +490,21 @@
     <div class="winner">🏆</div>
     <h2 id="winnerText" style="font-size:32px;margin:4px 0 0"></h2>
     <p id="winnerSub" class="setup-copy"></p>
+
+    <div id="statsGrid" class="stats-grid"></div>
     <div id="standings" class="standings"></div>
+
     <button id="playAgainBtn" class="btn primary" type="button">Play Again</button>
   </section>
+</div>
+
+<div id="confetti" class="confetti hidden" aria-hidden="true"></div>
+<div id="celebration" class="celebration hidden" role="dialog" aria-modal="true" aria-label="Whatzee celebration">
+  <div class="celebration-card">
+    <div class="celebration-title">WHATZEE!</div>
+    <div id="celebrationSub" class="celebration-sub">Five of a kind!</div>
+    <button id="celebrationClose" class="btn primary" style="margin-top:18px" type="button">Nice!</button>
+  </div>
 </div>
 
 <script>
@@ -552,12 +512,12 @@
   "use strict";
 
   const categories = [
-    { key:"ones", name:"Ones", desc:"Add all 1s", section:"upper" },
-    { key:"twos", name:"Twos", desc:"Add all 2s", section:"upper" },
-    { key:"threes", name:"Threes", desc:"Add all 3s", section:"upper" },
-    { key:"fours", name:"Fours", desc:"Add all 4s", section:"upper" },
-    { key:"fives", name:"Fives", desc:"Add all 5s", section:"upper" },
-    { key:"sixes", name:"Sixes", desc:"Add all 6s", section:"upper" },
+    { key:"ones", name:"Ones", desc:"Add all 1s", section:"upper", face:1 },
+    { key:"twos", name:"Twos", desc:"Add all 2s", section:"upper", face:2 },
+    { key:"threes", name:"Threes", desc:"Add all 3s", section:"upper", face:3 },
+    { key:"fours", name:"Fours", desc:"Add all 4s", section:"upper", face:4 },
+    { key:"fives", name:"Fives", desc:"Add all 5s", section:"upper", face:5 },
+    { key:"sixes", name:"Sixes", desc:"Add all 6s", section:"upper", face:6 },
     { key:"threeKind", name:"Three of a Kind", desc:"3 alike • total all dice", section:"lower" },
     { key:"fourKind", name:"Four of a Kind", desc:"4 alike • total all dice", section:"lower" },
     { key:"fullHouse", name:"Full House", desc:"3 of one + 2 of another • 25", section:"lower" },
@@ -582,7 +542,16 @@
     hasRolled: false,
     viewedPlayer: 0,
     botBusy: false,
-    gameOver: false
+    gameOver: false,
+    rolling: false,
+    muted: false,
+    options: {
+      suggestions:true,
+      animations:true,
+      sound:true,
+      celebrations:true,
+      botAnimations:true
+    }
   };
 
   const $ = id => document.getElementById(id);
@@ -594,6 +563,45 @@
   const statusEl = $("status");
   const rollBtn = $("rollBtn");
   const newGameBtn = $("newGameBtn");
+
+  let audioCtx = null;
+
+  function safeAudio(){
+    if (!state.options.sound || state.muted) return null;
+    try{
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === "suspended") audioCtx.resume();
+      return audioCtx;
+    }catch(e){ return null; }
+  }
+
+  function tone(freq=440,duration=.08,type="sine",gain=.04,delay=0){
+    const ctx = safeAudio();
+    if (!ctx) return;
+    const osc = ctx.createOscillator();
+    const g = ctx.createGain();
+    osc.type = type;
+    osc.frequency.value = freq;
+    g.gain.setValueAtTime(0.0001,ctx.currentTime+delay);
+    g.gain.exponentialRampToValueAtTime(gain,ctx.currentTime+delay+.01);
+    g.gain.exponentialRampToValueAtTime(0.0001,ctx.currentTime+delay+duration);
+    osc.connect(g).connect(ctx.destination);
+    osc.start(ctx.currentTime+delay);
+    osc.stop(ctx.currentTime+delay+duration+.02);
+  }
+
+  function playRollSound(){
+    tone(180,.05,"square",.025,0);
+    tone(240,.05,"square",.02,.05);
+    tone(150,.06,"square",.02,.10);
+  }
+  function playScoreSound(){
+    tone(520,.08,"sine",.035,0);
+    tone(700,.10,"sine",.03,.08);
+  }
+  function playWhatzeeSound(){
+    [523,659,784,1047].forEach((f,i)=>tone(f,.18,"sine",.045,i*.09));
+  }
 
   function makeSetupPlayer(type="human"){
     const botCount = state.setupPlayers.filter(p => p.type === "bot").length;
@@ -612,7 +620,7 @@
 
   function renderSetup(){
     playerRows.innerHTML = "";
-    state.setupPlayers.forEach((p, index) => {
+    state.setupPlayers.forEach((p,index) => {
       const row = document.createElement("div");
       row.className = "player-row";
 
@@ -669,11 +677,24 @@
     renderSetup();
   }
 
+  function readOptions(){
+    state.options.suggestions = $("suggestToggle").checked;
+    state.options.animations = $("animateToggle").checked;
+    state.options.sound = $("soundToggle").checked;
+    state.options.celebrations = $("celebrateToggle").checked;
+    state.options.botAnimations = $("botAnimToggle").checked;
+  }
+
   function startGame(){
+    readOptions();
+
     const cleaned = state.setupPlayers.map((p,i) => ({
       ...p,
       name: (p.name || `${p.type === "bot" ? "Bot" : "Player"} ${i+1}`).trim(),
-      scores:{}
+      scores:{},
+      whatzeeBonuses:0,
+      whatzeesRolled:0,
+      bestTurn:0
     }));
 
     if (!cleaned.length) return;
@@ -688,12 +709,16 @@
     state.viewedPlayer = 0;
     state.botBusy = false;
     state.gameOver = false;
+    state.rolling = false;
 
     setupScreen.classList.add("hidden");
     resultsScreen.classList.add("hidden");
     gameScreen.classList.remove("hidden");
     newGameBtn.classList.remove("hidden");
+    $("soundBtn").classList.remove("hidden");
+    updateSoundButton();
 
+    showTurnBanner();
     renderAll();
     maybeRunBot();
   }
@@ -715,9 +740,9 @@
     state.dice.forEach((value,index) => {
       const die = document.createElement("button");
       die.type = "button";
-      die.className = "die" + (state.held[index] ? " held" : "");
+      die.className = "die" + (state.held[index] ? " held" : "") + (state.rolling && !state.held[index] ? " rolling" : "");
       die.setAttribute("aria-label", `Die ${index+1}: ${value}${state.held[index] ? ", held" : ""}`);
-      die.disabled = !state.hasRolled || currentPlayer().type === "bot" || state.botBusy;
+      die.disabled = !state.hasRolled || currentPlayer().type === "bot" || state.botBusy || state.rolling;
       pipPositions(value).forEach(pos => {
         const pip = document.createElement("span");
         pip.className = `pip ${pos}`;
@@ -729,20 +754,38 @@
   }
 
   function toggleHold(index){
-    if (!state.hasRolled || currentPlayer().type !== "human" || state.botBusy) return;
+    if (!state.hasRolled || currentPlayer().type !== "human" || state.botBusy || state.rolling) return;
     state.held[index] = !state.held[index];
     renderDice();
   }
 
-  function rollDice(){
-    if (state.rollsUsed >= 3 || state.botBusy) return;
+  async function rollDice(){
+    if (state.rollsUsed >= 3 || state.botBusy || state.rolling) return;
+    state.rolling = true;
+    playRollSound();
+
+    if (state.options.animations){
+      renderDice();
+      await sleep(420);
+    }
+
     for (let i=0;i<5;i++){
       if (!state.held[i]) state.dice[i] = 1 + Math.floor(Math.random()*6);
     }
+
     state.rollsUsed++;
     state.hasRolled = true;
+    state.rolling = false;
     renderAll();
+
+    if (isWhatzee(state.dice)) {
+      currentPlayer().whatzeesRolled++;
+      if (state.options.celebrations) showWhatzeeCelebration(currentPlayer().name);
+      else playWhatzeeSound();
+    }
   }
+
+  function sleep(ms){ return new Promise(r => setTimeout(r,ms)); }
 
   function counts(dice){
     const c = [0,0,0,0,0,0,0];
@@ -751,11 +794,17 @@
   }
 
   function sum(dice){ return dice.reduce((a,b) => a+b,0); }
+  function isWhatzee(dice){ return new Set(dice).size === 1; }
 
-  function scoreCategory(key,dice){
+  function jokerActive(player,dice){
+    return isWhatzee(dice) && player.scores.whatzee === 50;
+  }
+
+  function scoreCategory(key,dice,player=currentPlayer()){
     const c = counts(dice);
     const total = sum(dice);
     const unique = [...new Set(dice)].sort((a,b)=>a-b);
+    const joker = jokerActive(player,dice);
 
     switch(key){
       case "ones": return c[1]*1;
@@ -764,15 +813,15 @@
       case "fours": return c[4]*4;
       case "fives": return c[5]*5;
       case "sixes": return c[6]*6;
-      case "threeKind": return c.some(n => n >= 3) ? total : 0;
-      case "fourKind": return c.some(n => n >= 4) ? total : 0;
-      case "fullHouse": return c.includes(3) && c.includes(2) ? 25 : 0;
+      case "threeKind": return (c.some(n => n >= 3) || joker) ? total : 0;
+      case "fourKind": return (c.some(n => n >= 4) || joker) ? total : 0;
+      case "fullHouse": return (c.includes(3) && c.includes(2)) || joker ? 25 : 0;
       case "smallStraight": {
         const s = unique.join("");
-        return (s.includes("1234") || s.includes("2345") || s.includes("3456")) ? 30 : 0;
+        return (s.includes("1234") || s.includes("2345") || s.includes("3456") || joker) ? 30 : 0;
       }
       case "largeStraight":
-        return (unique.join("") === "12345" || unique.join("") === "23456") ? 40 : 0;
+        return (unique.join("") === "12345" || unique.join("") === "23456" || joker) ? 40 : 0;
       case "whatzee": return c.some(n => n === 5) ? 50 : 0;
       case "chance": return total;
       default: return 0;
@@ -782,12 +831,12 @@
   function upperSubtotal(player){
     return upperKeys.reduce((t,k) => t + (player.scores[k] ?? 0),0);
   }
-
-  function bonus(player){ return upperSubtotal(player) >= 63 ? 35 : 0; }
+  function upperBonus(player){ return upperSubtotal(player) >= 63 ? 35 : 0; }
+  function whatzeeBonusTotal(player){ return (player.whatzeeBonuses || 0) * 100; }
 
   function grandTotal(player){
     const base = categories.reduce((t,c) => t + (player.scores[c.key] ?? 0),0);
-    return base + bonus(player);
+    return base + upperBonus(player) + whatzeeBonusTotal(player);
   }
 
   function currentPlayer(){ return state.players[state.currentPlayer]; }
@@ -796,10 +845,10 @@
     const p = currentPlayer();
     $("turnTitle").textContent = `${p.name}${p.type === "bot" ? " 🤖" : ""}`;
     $("turnMeta").textContent = `${p.type === "bot" ? p.difficulty[0].toUpperCase()+p.difficulty.slice(1)+" bot" : "Human player"} • ${state.rollsUsed}/3 rolls used`;
-    $("roundBadge").textContent = `Round ${state.round} / 13`;
+    $("roundBadge").textContent = `Round ${Math.min(state.round,13)} / 13`;
 
     rollBtn.textContent = state.rollsUsed === 0 ? "Roll Dice" : state.rollsUsed < 3 ? `Roll Again (${3-state.rollsUsed} left)` : "No Rolls Left";
-    rollBtn.disabled = state.rollsUsed >= 3 || p.type === "bot" || state.botBusy;
+    rollBtn.disabled = state.rollsUsed >= 3 || p.type === "bot" || state.botBusy || state.rolling;
 
     if (!state.hasRolled){
       statusEl.textContent = p.type === "bot" ? `${p.name} is getting ready to roll…` : "Roll the dice to begin.";
@@ -826,13 +875,43 @@
     });
   }
 
+  function bestAvailableKey(player){
+    if (!state.hasRolled) return null;
+    const avail = categories.filter(c => !Object.prototype.hasOwnProperty.call(player.scores,c.key));
+    if (!avail.length) return null;
+
+    const weighted = avail.map(cat => {
+      const value = scoreCategory(cat.key,state.dice,player);
+      let rank = value;
+      if (cat.section === "upper") rank += Math.min(8,value/2);
+      if (cat.key === "whatzee" && value === 50) rank += 50;
+      if (cat.key === "largeStraight" && value === 40) rank += 16;
+      if (cat.key === "smallStraight" && value === 30) rank += 10;
+      if (cat.key === "chance" && value < 20) rank -= 8;
+      return {key:cat.key,rank};
+    }).sort((a,b)=>b.rank-a.rank);
+
+    return weighted[0].key;
+  }
+
   function renderScorecard(){
     const p = state.players[state.viewedPlayer];
     $("scorecardName").textContent = p.name;
     renderTabs();
 
+    const bonusCount = p.whatzeeBonuses || 0;
+    $("whatzeeBonusCount").textContent = bonusCount;
+    $("whatzeeBonusChip").classList.toggle("hidden", bonusCount === 0);
+
     const body = $("scoreBody");
     body.innerHTML = "";
+
+    const bestKey = state.options.suggestions &&
+                    state.viewedPlayer === state.currentPlayer &&
+                    currentPlayer().type === "human" &&
+                    state.hasRolled
+                    ? bestAvailableKey(p)
+                    : null;
 
     ["upper","lower"].forEach(section => {
       const sectionRow = document.createElement("tr");
@@ -858,15 +937,16 @@
                          state.hasRolled &&
                          !used &&
                          !state.botBusy &&
-                         !state.gameOver;
+                         !state.gameOver &&
+                         !state.rolling;
 
         if (canScore){
-          const preview = scoreCategory(cat.key,state.dice);
+          const preview = scoreCategory(cat.key,state.dice,p);
           const b = document.createElement("button");
           b.type = "button";
-          b.className = "score-btn available";
+          b.className = "score-btn available" + (bestKey === cat.key ? " best" : "");
           b.textContent = preview;
-          b.title = `Score ${preview} in ${cat.name}`;
+          b.title = bestKey === cat.key ? `Suggested: score ${preview} in ${cat.name}` : `Score ${preview} in ${cat.name}`;
           b.addEventListener("click", () => commitScore(cat.key));
           scoreTd.appendChild(b);
         } else {
@@ -879,7 +959,8 @@
     });
 
     $("upperTotal").textContent = upperSubtotal(p);
-    $("bonusTotal").textContent = bonus(p);
+    $("bonusTotal").textContent = upperBonus(p);
+    $("whatzeeBonusTotal").textContent = whatzeeBonusTotal(p);
     $("grandTotal").textContent = grandTotal(p);
   }
 
@@ -890,12 +971,26 @@
     renderScorecard();
   }
 
+  function maybeAwardExtraWhatzee(player){
+    if (!isWhatzee(state.dice)) return false;
+    if (player.scores.whatzee !== 50) return false;
+    player.whatzeeBonuses = (player.whatzeeBonuses || 0) + 1;
+    return true;
+  }
+
   function commitScore(key){
     const p = currentPlayer();
-    if (!state.hasRolled || Object.prototype.hasOwnProperty.call(p.scores,key)) return;
-    const value = scoreCategory(key,state.dice);
+    if (!state.hasRolled || Object.prototype.hasOwnProperty.call(p.scores,key) || state.rolling) return;
+
+    const extra = maybeAwardExtraWhatzee(p);
+    const value = scoreCategory(key,state.dice,p);
     p.scores[key] = value;
-    statusEl.textContent = `${p.name} scored ${value} in ${categories.find(c=>c.key===key).name}.`;
+    p.bestTurn = Math.max(p.bestTurn || 0, value + (extra ? 100 : 0));
+    playScoreSound();
+
+    const bonusText = extra ? " plus a 100-point extra Whatzee bonus!" : ".";
+    statusEl.textContent = `${p.name} scored ${value} in ${categories.find(c=>c.key===key).name}${bonusText}`;
+
     advanceTurn();
   }
 
@@ -917,11 +1012,13 @@
     state.dice = [1,1,1,1,1];
     state.viewedPlayer = state.currentPlayer;
     state.botBusy = false;
+    state.rolling = false;
 
     setTimeout(() => {
+      showTurnBanner();
       renderAll();
       maybeRunBot();
-    }, 450);
+    }, 380);
   }
 
   function availableCategories(player){
@@ -934,23 +1031,25 @@
     const total = sum(dice);
 
     if (cat.section === "upper"){
-      const face = upperKeys.indexOf(cat.key)+1;
-      score += c[face] * (difficulty === "hard" ? 2.3 : difficulty === "normal" ? 1.3 : .5);
+      const face = cat.face;
+      score += c[face] * (difficulty === "hard" ? 2.4 : difficulty === "normal" ? 1.4 : .5);
       const needed = Math.max(0,63-upperSubtotal(player));
-      if (difficulty === "hard" && needed > 0) score += Math.min(6, value/3);
+      if (difficulty === "hard" && needed > 0) score += Math.min(6,value/3);
     }
 
-    if (cat.key === "whatzee" && value === 50) score += 40;
+    if (cat.key === "whatzee" && value === 50) score += 45;
     if (cat.key === "largeStraight" && value === 40) score += 22;
     if (cat.key === "smallStraight" && value === 30) score += 14;
     if (cat.key === "fullHouse" && value === 25) score += 10;
     if (cat.key === "chance" && total < 20) score -= difficulty === "hard" ? 10 : 4;
 
     if (value === 0){
-      const sacrificial = ["ones","twos","threeKind","fourKind","whatzee"];
+      const sacrificial = ["ones","twos","threeKind","fourKind"];
       score -= sacrificial.includes(cat.key) ? 1 : 4;
-      if (difficulty === "hard" && cat.key === "whatzee") score -= 8;
+      if (difficulty === "hard" && cat.key === "whatzee") score -= 12;
     }
+
+    if (jokerActive(player,dice) && cat.key !== "whatzee") score += 100;
     return score;
   }
 
@@ -958,10 +1057,10 @@
     const avail = availableCategories(player);
     const scored = avail.map(cat => ({
       cat,
-      value:scoreCategory(cat.key,state.dice)
+      value:scoreCategory(cat.key,state.dice,player)
     }));
 
-    if (difficulty === "easy" && Math.random() < .25){
+    if (difficulty === "easy" && Math.random() < .24){
       return scored[Math.floor(Math.random()*scored.length)].cat.key;
     }
 
@@ -969,6 +1068,7 @@
       categoryValueWeight(b.cat,b.value,state.dice,player,difficulty) -
       categoryValueWeight(a.cat,a.value,state.dice,player,difficulty)
     );
+
     return scored[0].cat.key;
   }
 
@@ -978,8 +1078,7 @@
     const avail = new Set(availableCategories(player).map(x => x.key));
 
     if (difficulty === "easy"){
-      const holdChance = .35;
-      return d.map(() => Math.random() < holdChance);
+      return d.map(() => Math.random() < .35);
     }
 
     const maxCount = Math.max(...c);
@@ -1017,9 +1116,7 @@
       return d.map(v => keep.has(v));
     }
 
-    if (maxCount >= 2){
-      return d.map(v => v === bestFace);
-    }
+    if (maxCount >= 2) return d.map(v => v === bestFace);
 
     if (difficulty === "hard"){
       const high = Math.max(...d);
@@ -1032,13 +1129,32 @@
   function shouldBotStopEarly(player,difficulty){
     if (state.rollsUsed >= 3) return true;
     const avail = availableCategories(player);
-    const best = Math.max(...avail.map(c => scoreCategory(c.key,state.dice)));
+    const best = Math.max(...avail.map(c => scoreCategory(c.key,state.dice,player)));
 
-    if (best >= 50) return true;
+    if (isWhatzee(state.dice)) return true;
     if (best >= 40 && difficulty !== "easy") return true;
     if (best >= 30 && state.rollsUsed >= 2 && difficulty === "normal") return true;
     if (best >= 25 && state.rollsUsed >= 2 && difficulty === "easy") return Math.random() < .6;
     return false;
+  }
+
+  async function botRoll(){
+    state.rolling = true;
+    playRollSound();
+    renderDice();
+
+    if (state.options.animations && state.options.botAnimations) await sleep(380);
+
+    for (let i=0;i<5;i++){
+      if (!state.held[i]) state.dice[i] = 1 + Math.floor(Math.random()*6);
+    }
+
+    state.rollsUsed++;
+    state.hasRolled = true;
+    state.rolling = false;
+    renderAll();
+
+    if (isWhatzee(state.dice)) currentPlayer().whatzeesRolled++;
   }
 
   async function maybeRunBot(){
@@ -1048,43 +1164,96 @@
     state.botBusy = true;
     renderAll();
 
-    const pause = ms => new Promise(r => setTimeout(r,ms));
+    const think = state.options.botAnimations ? 600 : 60;
+    const show = state.options.botAnimations ? 650 : 80;
 
     statusEl.innerHTML = `<span class="bot-thinking">🤖 ${p.name} is thinking…</span>`;
-    await pause(650);
+    await sleep(think);
 
     while (state.rollsUsed < 3){
-      for (let i=0;i<5;i++){
-        if (!state.held[i]) state.dice[i] = 1 + Math.floor(Math.random()*6);
-      }
-      state.rollsUsed++;
-      state.hasRolled = true;
-      renderDice();
-      renderHeader();
-      renderScorecard();
+      await botRoll();
       statusEl.textContent = `${p.name} rolled ${state.dice.join(", ")}.`;
-      await pause(700);
+      await sleep(show);
 
       if (shouldBotStopEarly(p,p.difficulty)) break;
 
       state.held = chooseBotHolds(p,p.difficulty);
       renderDice();
+
       const heldValues = state.dice.filter((_,i) => state.held[i]);
       statusEl.textContent = heldValues.length
         ? `${p.name} holds ${heldValues.join(", ")}.`
         : `${p.name} keeps nothing and rerolls all five.`;
-      await pause(650);
+
+      await sleep(show);
+    }
+
+    if (isWhatzee(state.dice) && state.options.celebrations) {
+      await showWhatzeeCelebration(p.name, true);
     }
 
     const key = chooseBotScore(p,p.difficulty);
-    const val = scoreCategory(key,state.dice);
+    const extra = maybeAwardExtraWhatzee(p);
+    const val = scoreCategory(key,state.dice,p);
     p.scores[key] = val;
+    p.bestTurn = Math.max(p.bestTurn || 0, val + (extra ? 100 : 0));
+
+    playScoreSound();
     renderScorecard();
-    statusEl.textContent = `${p.name} scores ${val} in ${categories.find(c=>c.key===key).name}.`;
-    await pause(800);
+    statusEl.textContent = `${p.name} scores ${val} in ${categories.find(c=>c.key===key).name}${extra ? " + 100 Whatzee bonus!" : "."}`;
+    await sleep(show);
 
     state.botBusy = false;
     advanceTurn();
+  }
+
+  function showTurnBanner(){
+    const p = currentPlayer();
+    const banner = $("turnBanner");
+    banner.textContent = `${p.name}${p.type === "bot" ? " 🤖" : ""}'s Turn`;
+    banner.classList.remove("hidden");
+    clearTimeout(showTurnBanner.timer);
+    showTurnBanner.timer = setTimeout(() => banner.classList.add("hidden"), 1200);
+  }
+
+  function makeConfetti(){
+    const box = $("confetti");
+    box.innerHTML = "";
+    box.classList.remove("hidden");
+    const colors = ["#facc15","#38bdf8","#c084fc","#22c55e","#fb7185","#f8fafc"];
+
+    for (let i=0;i<70;i++){
+      const piece = document.createElement("span");
+      piece.className = "confetti-piece";
+      piece.style.left = `${Math.random()*100}%`;
+      piece.style.background = colors[Math.floor(Math.random()*colors.length)];
+      piece.style.animationDelay = `${Math.random()*.5}s`;
+      piece.style.animationDuration = `${1.3+Math.random()*1.2}s`;
+      piece.style.transform = `rotate(${Math.random()*180}deg)`;
+      box.appendChild(piece);
+    }
+
+    setTimeout(() => {
+      box.classList.add("hidden");
+      box.innerHTML = "";
+    }, 2600);
+  }
+
+  function showWhatzeeCelebration(name, autoClose=false){
+    playWhatzeeSound();
+    makeConfetti();
+    $("celebrationSub").textContent = `${name} rolled five of a kind!`;
+    $("celebration").classList.remove("hidden");
+
+    return new Promise(resolve => {
+      const close = () => {
+        $("celebration").classList.add("hidden");
+        $("celebrationClose").removeEventListener("click",close);
+        resolve();
+      };
+      $("celebrationClose").addEventListener("click",close,{once:true});
+      if (autoClose) setTimeout(close,1200);
+    });
   }
 
   function finishGame(){
@@ -1110,20 +1279,44 @@
       row.className = "standing";
       row.innerHTML = `
         <div class="place">${i+1}</div>
-        <div><strong>${p.name}${p.type==="bot" ? " 🤖" : ""}</strong><div style="color:var(--muted);font-size:12px">${p.type==="bot" ? p.difficulty+" bot" : "human"}</div></div>
+        <div>
+          <strong>${p.name}${p.type==="bot" ? " 🤖" : ""}</strong>
+          <div style="color:var(--muted);font-size:12px">
+            ${p.type==="bot" ? p.difficulty+" bot" : "human"} • ${p.whatzeeBonuses || 0} bonus Whatzee${(p.whatzeeBonuses || 0)===1?"":"s"}
+          </div>
+        </div>
         <div style="font-size:24px;font-weight:950">${grandTotal(p)}</div>`;
       standings.appendChild(row);
     });
+
+    const totalWhatzees = state.players.reduce((t,p)=>t+(p.whatzeesRolled||0),0);
+    const totalBonuses = state.players.reduce((t,p)=>t+(p.whatzeeBonuses||0),0);
+    const bestTurn = Math.max(...state.players.map(p=>p.bestTurn||0));
+
+    $("statsGrid").innerHTML = `
+      <div class="stat-card"><strong>${totalWhatzees}</strong><span>Whatzees Rolled</span></div>
+      <div class="stat-card"><strong>${totalBonuses}</strong><span>Extra Whatzee Bonuses</span></div>
+      <div class="stat-card"><strong>${bestTurn}</strong><span>Best Scoring Turn</span></div>`;
   }
 
   function resetToSetup(){
     state.gameOver = false;
     state.botBusy = false;
+    state.rolling = false;
     gameScreen.classList.add("hidden");
     resultsScreen.classList.add("hidden");
     setupScreen.classList.remove("hidden");
     newGameBtn.classList.add("hidden");
+    $("soundBtn").classList.add("hidden");
+    $("celebration").classList.add("hidden");
+    $("confetti").classList.add("hidden");
     renderSetup();
+  }
+
+  function updateSoundButton(){
+    $("soundBtn").textContent = state.muted ? "🔇" : "🔊";
+    $("soundBtn").title = state.muted ? "Unmute sound" : "Mute sound";
+    $("soundBtn").setAttribute("aria-label", state.muted ? "Unmute sound" : "Mute sound");
   }
 
   $("addHumanBtn").addEventListener("click", () => addPlayer("human"));
@@ -1132,6 +1325,10 @@
   rollBtn.addEventListener("click", rollDice);
   newGameBtn.addEventListener("click", resetToSetup);
   $("playAgainBtn").addEventListener("click", resetToSetup);
+  $("soundBtn").addEventListener("click", () => {
+    state.muted = !state.muted;
+    updateSoundButton();
+  });
 
   initSetup();
 })();
